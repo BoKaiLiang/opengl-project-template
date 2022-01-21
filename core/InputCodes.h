@@ -17,8 +17,12 @@ typedef enum class MouseCode : uint16_t
 	ButtonLast = Button7,
 	ButtonLeft = Button0,
 	ButtonRight = Button1,
-	ButtonMiddle = Button2
+	ButtonMiddle = Button2,
+
+	MAX_MOUSE_BUTTON,
 } Mouse;
+
+#define MAX_MOUSE_BUTTON_COUNT ((int)Mouse::MAX_MOUSE_BUTTON)
 
 inline std::ostream& operator<<(std::ostream& os, MouseCode mouseCode)
 {
@@ -158,8 +162,12 @@ typedef enum class KeyCode : uint16_t
 	RightControl = 345,
 	RightAlt = 346,
 	RightSuper = 347,
-	Menu = 348
+	Menu = 348,
+
+	MAX_KEY
 } Key;
+
+#define MAX_KEY_COUNT ((int)KeyCode::MAX_KEY)
 
 inline std::ostream& operator<<(std::ostream& os, KeyCode keyCode)
 {

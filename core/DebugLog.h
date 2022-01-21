@@ -1,25 +1,23 @@
 #ifndef _LOG_H_
 #define _LOG_H_
 
-#include <memory>
+#include <cstdarg>
 
-#include <spdlog/spdlog.h>
-#include <spdlog/fmt/ostr.h>
-
-class DebugLog
+enum class LogType
 {
-public:
-	static void Init();
-
-	inline static std::shared_ptr<spdlog::logger>& GetLogger() { return s_Logger; }
-private:
-	static std::shared_ptr<spdlog::logger> s_Logger;
+	INFO,
+	WARN,
+	ERR,
+	FATAL,
 };
 
-#define DEBUG_TRACE(...)         DebugLog::GetLogger()->trace(__VA_ARGS__)
-#define DEBUG_INFO(...)          DebugLog::GetLogger()->info(__VA_ARGS__)
-#define DEBUG_WARN(...)          DebugLog::GetLogger()->warn(__VA_ARGS__)
-#define DEBUG_ERROR(...)         DebugLog::GetLogger()->error(__VA_ARGS__)
-#define DEBUG_CRITICAL(...)      DebugLog::GetLogger()->critical(__VA_ARGS__)
+#define MAX_LOG_TYPE ((int)LogType::FATAL + 1)
+
+#define DEBUG_INFO(...)          LogMessage(LogType::INFO, __FILE__, __LINE__, __VA_ARGS__)
+#define DEBUG_WARN(...)          LogMessage(LogType::WARN, __FILE__, __LINE__, __VA_ARGS__)
+#define DEBUG_ERROR(...)         LogMessage(LogType::ERR, __FILE__, __LINE__, __VA_ARGS__)
+#define DEBUG_CRITICAL(...)      LogMessage(LogType::FATAL, __FILE__, __LINE__, __VA_ARGS__)
+
+void LogMessage(LogType type, const char* fileName, int line, const char* fmt, ...);
 
 #endif // _LOG_H_

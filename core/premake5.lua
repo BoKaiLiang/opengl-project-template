@@ -16,13 +16,11 @@ project "core"
 
 	includedirs
 	{
-		"../ext/glad/include",
-		"../ext/glfw3/include",
-		"../ext/glm/include",
-		"../ext/spdlog/include",
-		"../ext/imgui",
-		"../ext/stb",
-		"../ext/tinyobjloader",
+		"../external/glad/include",
+		"../external/glfw3/include",
+		"../external/glm",
+		"../external/imgui",
+		"../external/stb",
 	}
 
 	links

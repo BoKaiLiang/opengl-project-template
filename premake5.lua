@@ -16,6 +16,6 @@ workspace "OpenGL"
 outputdir = "%{cfg.buildcfg}-%{cfg.architecture}"
 
 
-include "ext"
+include "external"
 include "core"
 include "sandbox"

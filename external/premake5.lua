@@ -26,6 +26,17 @@ project "external"
 		"glfw3/src/vulkan.c",
 		"glfw3/src/window.c",
 
+		-- glm
+		"glm/glm/**.hpp",
+		"glm/glm/ext/**.hpp",
+		"glm/glm/ext/**.inl",
+		"glm/glm/gtc/**.hpp",
+		"glm/glm/gtc/**.inl",
+		"glm/glm/gtx/**.hpp",
+		"glm/glm/gtx/**.inl",
+		"glm/glm/detail/**.hpp",
+		"glm/glm/detail/**.inl",
+
 		-- Dear imgui
 		"imgui/imconfig.h",
 		"imgui/imgui.h",
@@ -38,21 +49,9 @@ project "external"
 		"imgui/imstb_truetype.h",
 		"imgui/imgui_demo.cpp",
 
-		-- spdlog
-		"spdlog/include/spdlog/**.h",
-		"spdlog/include/spdlog/cfg/**.h",
-		"spdlog/include/spdlog/details/**.h",
-		"spdlog/include/spdlog/fmt/**.h",
-		"spdlog/include/spdlog/sinks/**.h",
-		"spdlog/src/**.cpp",
-
 		-- stb
 		"stb/**.h",
 		"stb/**.cpp",
-
-		-- tinyobjloader
-		"tinyobjloader/**.h",
-		"tinyobjloader/**.cpp"
 	}
 
 	links 

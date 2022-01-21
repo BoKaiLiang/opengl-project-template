@@ -38,13 +38,9 @@ public:
 		delete shader;
 	}
 
-	virtual void OnEvent(Event& e) override
-	{
-	}
-
 	virtual void OnUpdate(float dt) override
 	{
-		if (Input::IsKeyPressed(KeyCode::Escape))
+		if (IsKeyPressed(KeyCode::Escape))
 			ShutDown();
 	}
 

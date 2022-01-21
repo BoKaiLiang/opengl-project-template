@@ -10,6 +10,3 @@
 #include "DebugLog.h"
 #include "Shader.h"
 #include "Texture.h"
-#include "Input.h"
-
-#include "Event.h"

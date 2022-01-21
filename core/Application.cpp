@@ -27,101 +27,53 @@ Application::Application(unsigned int width, unsigned int height, const std::str
 		glfwTerminate();
 	}
 
-	m_Data.Title = title;
-	m_Data.Width = width;
-	m_Data.Height = height;
-
 	glfwMakeContextCurrent(m_Window);
-	glfwSetWindowUserPointer(m_Window, &m_Data);
+	glfwSetWindowUserPointer(m_Window, &m_Input);
 
 	// GLFW Callbacks
-	glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
-	{
-		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-		data.Width = width;
-		data.Height = height;
-
-		WindowResizeEvent event(width, height);
-		data.EventCallback(event);
-	});
-
-	glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window)
-	{
-		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-		WindowCloseEvent event;
-		data.EventCallback(event);
-	});
-
 	glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
-		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+		InputData& input= *(InputData*)glfwGetWindowUserPointer(window);
 
 		switch (action)
 		{
 		case GLFW_PRESS:
-		{
-			KeyPressedEvent event(static_cast<KeyCode>(key), 0);
-			data.EventCallback(event);
+			input.m_CurrKeyBtnState[key] = 1;
 			break;
-		}
 		case GLFW_RELEASE:
-		{
-			KeyReleasedEvent event(static_cast<KeyCode>(key));
-			data.EventCallback(event);
+			input.m_CurrKeyBtnState[key] = 0;
 			break;
 		}
-		case GLFW_REPEAT:
-		{
-			KeyPressedEvent event(static_cast<KeyCode>(key), 1);
-			data.EventCallback(event);
-			break;
-		}
-		}
-	});
-
-	glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int keycode)
-	{
-		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-
-		KeyTypedEvent event(static_cast<KeyCode>(keycode));
-		data.EventCallback(event);
 	});
 
 	glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 	{
-		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+		InputData& input = *(InputData*)glfwGetWindowUserPointer(window);
 
 		switch (action)
 		{
 		case GLFW_PRESS:
-		{
-			MouseButtonPressedEvent event(static_cast<MouseCode>(button));
-			data.EventCallback(event);
+			input.m_CurrMouseBtnState[button] = 1;
 			break;
-		}
 		case GLFW_RELEASE:
-		{
-			MouseButtonReleasedEvent event(static_cast<MouseCode>(button));
-			data.EventCallback(event);
+			input.m_CurrMouseBtnState[button] = 0;
 			break;
-		}
 		}
 	});
 
 	glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset)
 	{
-		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+		InputData& input = *(InputData*)glfwGetWindowUserPointer(window);
 
-		MouseScrolledEvent event((float)xOffset, (float)yOffset);
-		data.EventCallback(event);
+		input.m_MouseScrollOffset = (float)yOffset;
 	});
 
 	glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xPos, double yPos)
 	{
-		WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+		InputData& input = *(InputData*)glfwGetWindowUserPointer(window);
 
-		MouseMovedEvent event((float)xPos, (float)yPos);
-		data.EventCallback(event);
+		input.m_CursorPos.x = (float)xPos;
+		input.m_CursorPos.y = (float)yPos;
 	});
 
 
@@ -130,8 +82,6 @@ Application::Application(unsigned int width, unsigned int height, const std::str
 		DEBUG_ERROR("Failed to initialize GLAD");
 	}
 	glEnable(GL_DEPTH_TEST);
-
-	m_Data.EventCallback = BIND_EVENT_FN(Application::OnEvent);
 
 	// Setup ImGui
 	// Setup Dear ImGui context
@@ -184,7 +134,11 @@ void Application::Run()
 		OnImGui();
 
 		ImGuiRender();
-		WindowUpdate();
+
+		glfwSwapBuffers(m_Window);
+
+		UpdateInputState();
+		glfwPollEvents();
 
 		lastTime = currentTime;
 	}
@@ -208,14 +162,74 @@ void Application::ImGuiClear()
 	ImGui::NewFrame();
 }
 
-void Application::WindowUpdate()
-{
-	glfwSwapBuffers(m_Window);
-	glfwPollEvents();
-}
-
 void Application::ImGuiRender()
 {
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void Application::UpdateInputState()
+{
+	m_Input.m_MouseScrollOffset = 0.0f;
+
+	for (int i = 0; i < MAX_KEY_COUNT; i++)
+	{
+		m_Input.m_PrevKeyBtnState[i] = m_Input.m_CurrKeyBtnState[i];
+		m_Input.m_CurrKeyBtnState[i] = 0;
+	}
+
+	for (int i = 0; i < MAX_MOUSE_BUTTON_COUNT; i++)
+	{
+		m_Input.m_PrevMouseBtnState[i] = m_Input.m_CurrMouseBtnState[i];
+		m_Input.m_CurrMouseBtnState[i] = 0;
+	}
+}
+
+bool Application::IsKeyPressed(KeyCode key)
+{
+	if (m_Input.m_PrevKeyBtnState[(int)key] == 0 && m_Input.m_CurrKeyBtnState[(int)key] == 1)
+		return true;
+	return false;
+}
+
+bool Application::IsKeyReleased(KeyCode key)
+{
+	if (m_Input.m_PrevKeyBtnState[(int)key] == 1 && m_Input.m_CurrKeyBtnState[(int)key] == 0)
+		return true;
+	return false;
+}
+
+bool Application::IsKeyDown(KeyCode key)
+{
+	if (m_Input.m_CurrKeyBtnState[(int)key] == 1)
+		return true;
+	return false;
+}
+
+bool Application::IsKeyUp(KeyCode key)
+{
+	if (m_Input.m_CurrKeyBtnState[(int)key] == 0)
+		return true;
+	return false;
+}
+
+bool Application::IsMouseButtonUp(Mouse mouse)
+{
+	if (m_Input.m_CurrMouseBtnState[(int)mouse] == 0)
+		return true;
+	return false;
+}
+
+bool Application::IsMouseButtonDown(Mouse mouse)
+{
+	if (m_Input.m_CurrMouseBtnState[(int)mouse] == 1)
+		return true;
+	return false;
+}
+
+bool Application::IsMouseButtonClick(Mouse mouse)
+{
+	if (m_Input.m_PrevMouseBtnState[(int)mouse] == 0 && m_Input.m_CurrMouseBtnState[(int)mouse] == 1)
+		return true;
+	return false;
 }

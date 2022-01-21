@@ -1,21 +1,23 @@
 #include "DebugLog.h"
 
-#include <spdlog/sinks/stdout_color_sinks.h>
-#include <spdlog/sinks/basic_file_sink.h>
+#include <cstdarg>
+#include <cstdio>
 
-std::shared_ptr<spdlog::logger> DebugLog::s_Logger;
+static const char* LOG_LABELS[MAX_LOG_TYPE] = {
+    "INFO",
+    "WARN",
+    "ERROR",
+    "FATAL"
+};
 
-void DebugLog::Init()
+void LogMessage(LogType type, const char* fileName, int line, const char* fmt, ...)
 {
-	std::vector<spdlog::sink_ptr> logSinks;
-	logSinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
-	logSinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("../Debug.log", true));
+    va_list args;
+    va_start(args, fmt);
 
-	logSinks[0]->set_pattern("%^[%T] %n: %v%$");
-	logSinks[1]->set_pattern("[%T] [%l] %n: %v");
+    fprintf(stdout, "[%s] %s:%d ", LOG_LABELS[(int)type], fileName, line);
+    vfprintf(stdout, fmt, args);
+    fprintf(stdout, "\n");
 
-	s_Logger = std::make_shared<spdlog::logger>("APP", begin(logSinks), end(logSinks));
-	spdlog::register_logger(s_Logger);
-	s_Logger->set_level(spdlog::level::trace);
-	s_Logger->flush_on(spdlog::level::trace);
+    va_end(args);
 }
