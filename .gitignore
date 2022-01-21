@@ -31,7 +31,6 @@ bin/
 *.lib
 
 # Executables
-*.exe
 *.out
 *.app
 
