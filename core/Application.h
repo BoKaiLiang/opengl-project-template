@@ -15,7 +15,7 @@ struct AppConfig
 	int m_Width = 300;
 	int m_Height = 400;
 	std::string m_Title = "OpenGL";
-	float m_FPS = 60;
+	int m_FPS = 60;
 	LogConfig m_DebugConfig = LogConfig::NOTHING;
 };
 
@@ -55,6 +55,8 @@ protected:
 
 	static Application* s_Instance;
 
+	double m_FrameTime;
+
 	struct InputData
 	{
 		int m_CurrKeyBtnState[MAX_KEY_COUNT] = { 0 };
@@ -72,6 +74,8 @@ protected:
 
 protected:
 	Application(AppConfig config);
+
+	void WaitTime(double wait);
 
 	void WindowClear(float r = 0.1f, float g = 0.1f, float b = 0.1f, float a = 1.0f);
 	void ImGuiClear();

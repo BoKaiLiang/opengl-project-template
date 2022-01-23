@@ -13,6 +13,7 @@
 Application* Application::s_Instance = nullptr;
 
 Application::Application(AppConfig config)
+	: m_FrameTime(1.0 / (double)config.m_FPS)
 {
 	// Debug log config
 	DebugLog::Init(config.m_DebugConfig);
@@ -119,37 +120,65 @@ Application::~Application()
 
 void Application::Run()
 {
-	float lastTime = (float)glfwGetTime();
-	float currentTime = 0.0f;
-	float elapsedTime = 0.0f;
+	double lastTime = 0.0f;
+	double currentTime = 0.0f;
+	double elapsedTime = 0.0f;
 
 	while (!glfwWindowShouldClose(m_Window)) {
 
+		OnUpdate(elapsedTime);
+		
+		// Update time
 		currentTime = glfwGetTime();
-		elapsedTime = currentTime - lastTime;
+		double updateTime = currentTime - lastTime;
+		lastTime = currentTime;
 
 		WindowClear();
 		ImGuiClear();
 
-		OnUpdate(elapsedTime);
 		OnRender();
-
 		OnImGui();
 
 		ImGuiRender();
 
 		glfwSwapBuffers(m_Window);
 
+		// Render time
+		currentTime = glfwGetTime();
+		double renderTime = currentTime - lastTime;
+		lastTime = currentTime;
+
+		// Fix timestep
+		elapsedTime = updateTime + renderTime;
+		if (elapsedTime < m_FrameTime)
+		{
+			WaitTime(m_FrameTime - elapsedTime);
+			currentTime = glfwGetTime();
+			double extraTime = currentTime - lastTime;
+			lastTime = currentTime;
+
+			elapsedTime += extraTime;
+		}
+
+		// Input state
 		UpdateInputState();
 		glfwPollEvents();
-
-		lastTime = currentTime;
 	}
 }
 
 void Application::ShutDown()
 {
 	glfwSetWindowShouldClose(m_Window, true);
+}
+
+void Application::WaitTime(double wait)
+{
+	double end_time = 0.0f;
+	double start_time = glfwGetTime();
+	while ((end_time - start_time) < wait)
+	{
+		end_time = glfwGetTime();
+	}
 }
 
 void Application::WindowClear(float r, float g, float b, float a)

@@ -40,6 +40,8 @@ public:
 
 	virtual void OnUpdate(float dt) override
 	{
+		// DEBUG_INFO("Delta time: %f", dt);
+
 		if (IsKeyPressed(KeyCode::Escape))
 			ShutDown();
 	}
@@ -71,7 +73,7 @@ int main(void)
 	AppConfig config;
 	config.m_Width = 800;
 	config.m_Height = 600;
-	config.m_DebugConfig = LogConfig::EXTRA_INFO;
+	config.m_DebugConfig = LogConfig::NOTHING;
 	config.m_Title = "Example";
 
 	auto app = new ExampleApplication(config);
