@@ -9,8 +9,8 @@ static float vertices[] = {
 class ExampleApplication : public Application
 {
 public:
-	ExampleApplication(unsigned int width, unsigned int height, const std::string& title)
-		: Application(width, height, title)
+	ExampleApplication(AppConfig config)
+		: Application(config)
 	{
 		shader = Shader::Create("../assets/shaders/base_vert.glsl", "../assets/shaders/base_frag.glsl");
 
@@ -68,6 +68,12 @@ private:
 
 int main(void)
 {
-	auto app = new ExampleApplication(800, 600, "Example");
+	AppConfig config;
+	config.m_Width = 800;
+	config.m_Height = 600;
+	config.m_DebugConfig = LogConfig::EXTRA_INFO;
+	config.m_Title = "Example";
+
+	auto app = new ExampleApplication(config);
 	app->Run();
 }

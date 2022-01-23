@@ -12,15 +12,18 @@
 
 Application* Application::s_Instance = nullptr;
 
-Application::Application(unsigned int width, unsigned int height, const std::string& title)
+Application::Application(AppConfig config)
 {
+	// Debug log config
+	DebugLog::Init(config.m_DebugConfig);
+
 	// Setup window
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	m_Window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
+	m_Window = glfwCreateWindow(config.m_Width, config.m_Height, config.m_Title.c_str(), NULL, NULL);
 	if (m_Window == nullptr)
 	{
 		DEBUG_ERROR("Failed to create GLFW window");

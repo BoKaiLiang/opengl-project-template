@@ -2,14 +2,22 @@
 #define _APPLICATION_H_
 
 #include <string>
-#include <functional>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
+#include "DebugLog.h"
 #include "InputCodes.h"
-#include "Event.h"
+
+struct AppConfig
+{
+	int m_Width = 300;
+	int m_Height = 400;
+	std::string m_Title = "OpenGL";
+	float m_FPS = 60;
+	LogConfig m_DebugConfig = LogConfig::NOTHING;
+};
 
 class Application {
 public:
@@ -63,7 +71,7 @@ protected:
 	InputData m_Input;
 
 protected:
-	Application(unsigned int width, unsigned int height, const std::string& title);
+	Application(AppConfig config);
 
 	void WindowClear(float r = 0.1f, float g = 0.1f, float b = 0.1f, float a = 1.0f);
 	void ImGuiClear();
