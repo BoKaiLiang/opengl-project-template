@@ -20,6 +20,9 @@ public:
 
 private:
 	GLuint m_ID = 0;
+	int m_Width = 1, m_Height = 1;
+	GLuint m_SrcFmt = GL_RED;
+	GLuint m_TexFmt = GL_RED;
 };
 
 #endif // !_TEXTURE_H_

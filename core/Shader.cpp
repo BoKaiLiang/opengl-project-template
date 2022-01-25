@@ -20,7 +20,7 @@ static std::string ReadFileAsString(const std::string& filepath)
 	}
 	else
 	{
-		DEBUG_ERROR("Cannot open the file: {0}", filepath);
+		DEBUG_ERROR("Cannot open the file: %s\n", filepath);
 	}
 
 	return result;
@@ -47,7 +47,7 @@ static GLuint compileShader(GLenum type, const std::string& source)
 
 		glDeleteShader(shader);
 
-		DEBUG_ERROR("{0}", infoLog.data());
+		DEBUG_ERROR("Failed to compile shader:\n\t%s\n", infoLog.data());
 	}
 
 	return shader;
@@ -83,7 +83,7 @@ Shader::Shader(const std::string& vertexPath, const std::string& fragPath)
 		glDeleteShader(vertexShader);
 		glDeleteShader(fragmentShader);
 
-		DEBUG_ERROR("{0}", infoLog.data());
+		DEBUG_ERROR("Failed to link shader program:\n\t%s\n", infoLog.data());
 	}
 
 	glDetachShader(m_ID, vertexShader);
@@ -100,6 +100,13 @@ Shader* Shader::Create(const std::string& vertexPath, const std::string& fragPat
 Shader::~Shader()
 {
 	glDeleteProgram(m_ID);
+}
+
+GLint Shader::GetAttributeLocation(const std::string& attribName) const
+{
+	glUseProgram(m_ID);
+	GLint location = glGetAttribLocation(m_ID, attribName.c_str());
+	return location;
 }
 
 void Shader::SetUniformInt(const std::string& uniName, int val) const

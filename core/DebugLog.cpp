@@ -35,7 +35,6 @@ void DebugLog::LogMessage(LogType type, const char* fileName, int line, const ch
     }
 
     vfprintf(stdout, fmt, args);
-    fprintf(stdout, "\n");
 
     va_end(args);
 }

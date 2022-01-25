@@ -8,5 +8,6 @@
 
 #include "Application.h"
 #include "DebugLog.h"
+#include "Time.h"
 #include "Shader.h"
 #include "Texture.h"

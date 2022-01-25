@@ -2,11 +2,12 @@
 #define _SHADER_H_
 
 #include <string>
+#include <unordered_map>
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
-class Shader {
+class Shader final {
 public:
 	
 	Shader(const std::string& vertexPath, const std::string& fragPath);
@@ -16,6 +17,8 @@ public:
 	~Shader();
 
 	inline GLuint GetID() const { return m_ID; }
+
+	GLint GetAttributeLocation(const std::string& attribName) const;
 
 	void SetUniformInt(const std::string& uniName, int val) const;
 	void SetUniformFloat(const std::string& uniName, float val) const;

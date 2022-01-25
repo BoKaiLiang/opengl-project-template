@@ -23,7 +23,7 @@ Application::Application(AppConfig config)
 	m_Window = glfwCreateWindow(config.m_Width, config.m_Height, config.m_Title.c_str(), NULL, NULL);
 	if (m_Window == nullptr)
 	{
-		DEBUG_ERROR("Failed to create GLFW window");
+		DEBUG_CRITICAL("Failed to create GLFW window\n");
 		glfwTerminate();
 	}
 
@@ -79,9 +79,12 @@ Application::Application(AppConfig config)
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
-		DEBUG_ERROR("Failed to initialize GLAD");
+		DEBUG_CRITICAL("Failed to initialize GLAD\n");
+		glfwDestroyWindow(m_Window);
+		glfwTerminate();
 	}
-	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Setup ImGui
 	// Setup Dear ImGui context
