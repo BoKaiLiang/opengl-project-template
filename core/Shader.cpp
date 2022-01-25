@@ -106,6 +106,10 @@ GLint Shader::GetAttributeLocation(const std::string& attribName) const
 {
 	glUseProgram(m_ID);
 	GLint location = glGetAttribLocation(m_ID, attribName.c_str());
+	if (location < 0)
+	{
+		DEBUG_WARN("Shader attribute not found: %s\n", attribName.c_str());
+	}
 	return location;
 }
 

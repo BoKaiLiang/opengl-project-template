@@ -17,6 +17,8 @@ public:
 	static Texture LoadTexture(const std::string& imgPath);
 
 	inline GLuint GetID() const { return m_ID; }
+	inline int GetWidth() const { return m_Width; };
+	inline int GetHeight() const { return m_Height; };
 
 private:
 	GLuint m_ID = 0;
