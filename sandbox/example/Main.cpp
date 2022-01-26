@@ -57,7 +57,7 @@ public:
 	{
 		ImGui::Begin("Debug");
 		ImGui::ColorEdit3("Triangle Color", glm::value_ptr(color));
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::Text("Frame rate: %d", GetFrameRate());
 		ImGui::End();
 	}
 
@@ -75,6 +75,7 @@ int main(void)
 	config.m_Height = 600;
 	config.m_DebugConfig = LogConfig::NOTHING;
 	config.m_Title = "Example";
+	config.m_FPS = 120;
 
 	auto app = new ExampleApplication(config);
 	app->Run();

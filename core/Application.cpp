@@ -9,7 +9,7 @@
 Application* Application::s_Instance = nullptr;
 
 Application::Application(AppConfig config)
-	: m_FrameTime(1.0 / (double)config.m_FPS)
+	: m_TargetTime(1.0 / (double)config.m_FPS)
 {
 	// Debug log config
 	DebugLog::Init(config.m_DebugConfig);
@@ -121,11 +121,11 @@ void Application::Run()
 {
 	double lastTime = 0.0f;
 	double currentTime = 0.0f;
-	double elapsedTime = 0.0f;
+	m_FrameTime = 0.0f;
 
 	while (!glfwWindowShouldClose(m_Window)) {
 
-		OnUpdate(elapsedTime);
+		OnUpdate(m_FrameTime);
 		
 		// Update time
 		currentTime = glfwGetTime();
@@ -148,15 +148,15 @@ void Application::Run()
 		lastTime = currentTime;
 
 		// Fix timestep
-		elapsedTime = updateTime + renderTime;
-		if (elapsedTime < m_FrameTime)
+		m_FrameTime = updateTime + renderTime;
+		if (m_FrameTime < m_TargetTime)
 		{
-			WaitTime(m_FrameTime - elapsedTime);
+			WaitTime(m_TargetTime - m_FrameTime);
 			currentTime = glfwGetTime();
 			double extraTime = currentTime - lastTime;
 			lastTime = currentTime;
 
-			elapsedTime += extraTime;
+			m_FrameTime += extraTime;
 		}
 
 		// Input state

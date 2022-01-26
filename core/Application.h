@@ -32,6 +32,7 @@ public:
 	void ShutDown();
 
 	inline GLFWwindow* GetRawWindow() { return m_Window; }
+	inline int GetFrameRate() const { return  static_cast<int>(1.0 / m_FrameTime); }
 
 	virtual void OnUpdate(float dt) = 0;
 	virtual void OnRender() = 0;
@@ -55,7 +56,8 @@ protected:
 
 	static Application* s_Instance;
 
-	double m_FrameTime;
+	double m_TargetTime = 0.0;
+	double m_FrameTime = 0.0;
 
 	struct InputData
 	{
