@@ -7,7 +7,7 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
-class Shader final {
+class Shader {
 public:
 	
 	Shader(const std::string& vertexPath, const std::string& fragPath);
